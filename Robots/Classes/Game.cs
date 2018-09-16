@@ -18,36 +18,43 @@ namespace Robots.Classes
 
         public string StartGame()
         {
-            while (_player.GetHealth() > 0)
+            var IsDead = false;
+            while (!IsDead && _robots.Count > 0)
             {
                 var keyPress = GameHelper.GetKeyPress();
 
                 switch (keyPress)
                 {
                     case ConsoleKey.UpArrow:
-                        MoveAction(GameHelper.PlayerAction.Move.Up);
+                        IsDead = MoveAction(_player, GameHelper.ActorAction.Move.Up);
                         break;
                     case ConsoleKey.DownArrow:
-                        MoveAction(GameHelper.PlayerAction.Move.Down);
+                        IsDead = MoveAction(_player, GameHelper.ActorAction.Move.Down);
                         break;
                     case ConsoleKey.LeftArrow:
-                        MoveAction(GameHelper.PlayerAction.Move.Left);
+                        IsDead = MoveAction(_player, GameHelper.ActorAction.Move.Left);
                         break;
                     case ConsoleKey.RightArrow:
-                        MoveAction(GameHelper.PlayerAction.Move.Right);
+                        IsDead = MoveAction(_player, GameHelper.ActorAction.Move.Right);
                         break;
                     case ConsoleKey.W:
-                        AttackAction(GameHelper.PlayerAction.Attack.Up);
+                        IsDead = AttackAction(GameHelper.ActorAction.Attack.Up);
                         break;
                     case ConsoleKey.S:
-                        AttackAction(GameHelper.PlayerAction.Attack.Down);
+                        IsDead = AttackAction(GameHelper.ActorAction.Attack.Down);
                         break;
                     case ConsoleKey.A:
-                        AttackAction(GameHelper.PlayerAction.Attack.Left);
+                        IsDead = AttackAction(GameHelper.ActorAction.Attack.Left);
                         break;
                     case ConsoleKey.D:
-                        AttackAction(GameHelper.PlayerAction.Attack.Right);
+                        IsDead = AttackAction(GameHelper.ActorAction.Attack.Right);
                         break;
+                }
+
+                var rand = new Random();
+                foreach (var robot in _robots)
+                {
+                    MoveAction(robot, rand.Next(0, 4));
                 }
 
                 _arena.DrawArena();
@@ -59,6 +66,11 @@ namespace Robots.Classes
                 Console.WriteLine("Player again? (y/n)");
                 k = Console.ReadLine()?.ToLower();
             } while (k != "y" && k != "n");
+
+            if (k == "n")
+            {
+                Console.WriteLine("Bye!");
+            }
 
             return k;
         }
@@ -77,75 +89,90 @@ namespace Robots.Classes
             StartGame();
         }
 
-        public void MoveAction(int action)
+        public bool MoveAction(IActor actor, int action)
         {
             int xf, yf;
             switch (action)
             {
-                case GameHelper.PlayerAction.Move.Up:
-                    xf = _player.GetX();
-                    yf = _player.GetY() - 1;
+                case GameHelper.ActorAction.Move.Up:
+                    xf = actor.GetX();
+                    yf = actor.GetY() - 1;
                     break;
-                case GameHelper.PlayerAction.Move.Down:
-                    xf = _player.GetX();
-                    yf = _player.GetY() + 1;
+                case GameHelper.ActorAction.Move.Down:
+                    xf = actor.GetX();
+                    yf = actor.GetY() + 1;
                     break;
-                case GameHelper.PlayerAction.Move.Left:
-                    xf = _player.GetX() - 1;
-                    yf = _player.GetY();
+                case GameHelper.ActorAction.Move.Left:
+                    xf = actor.GetX() - 1;
+                    yf = actor.GetY();
                     break;
-                case GameHelper.PlayerAction.Move.Right:
-                    xf = _player.GetX() + 1;
-                    yf = _player.GetY();
+                case GameHelper.ActorAction.Move.Right:
+                    xf = actor.GetX() + 1;
+                    yf = actor.GetY();
                     break;
                 default:
-                    return;
+                    return actor.GetHealth() <= 0;
             }
 
             // out of bounds
             if (xf < 0 || xf >= GameHelper.GetNumCols() || yf < 0 || yf >= GameHelper.GetNumRows())
             {
-                return;
+                return actor.GetHealth() <= 0; 
             }
 
             var nextPos = _arena.GetChar(xf, yf);
 
+            //Make sure that player isnt moving to that position, if so attack
+            if (actor.GetType() == typeof(Robot) && xf == _player.GetX() && yf == _player.GetY())
+            {
+                _player.Action(GameHelper.ActorAction.Action.TakeDamage);
+                return actor.GetHealth() <= 0;
+            }
             // clear spot to move
             if (nextPos == '.')
             {
-                _player.Action(action);
+                return actor.Action(action);
             }
             // run into robot
-            else if (nextPos.ToString().IndexOfAny("R123456789".ToCharArray()) != -1)
+            if (actor.GetType() == typeof(Player) && nextPos.ToString().IndexOfAny("R123456789".ToCharArray()) != -1)
             {
-                _player.Action(GameHelper.PlayerAction.Action.TakeDamage);
+                return actor.Action(GameHelper.ActorAction.Action.TakeDamage);
+            }
+            if (actor.GetType() == typeof(Robot) && nextPos.ToString().IndexOfAny("R12345678".ToCharArray()) != -1)
+            {
+                return actor.Action(action);
+            }
+            if (actor.GetType() == typeof(Robot) && nextPos == 'P')
+            {
+                _player.Action(GameHelper.ActorAction.Action.TakeDamage);
             }
             // else ran into wall, do nothing
+            return actor.GetHealth() <= 0;
         }
 
-        public void AttackAction(int action)
+        public bool AttackAction(int action)
         {
             int xf, yf;
             switch (action)
             {
-                case GameHelper.PlayerAction.Attack.Up:
+                case GameHelper.ActorAction.Attack.Up:
                     xf = 0;
                     yf = -1;
                     break;
-                case GameHelper.PlayerAction.Attack.Down:
+                case GameHelper.ActorAction.Attack.Down:
                     xf = 0;
                     yf = 1;
                     break;
-                case GameHelper.PlayerAction.Attack.Right:
+                case GameHelper.ActorAction.Attack.Right:
                     xf = 1;
                     yf = 0;
                     break;
-                case GameHelper.PlayerAction.Attack.Left:
+                case GameHelper.ActorAction.Attack.Left:
                     xf = -1;
                     yf = 0;
                     break;
                 default:
-                    return;
+                    return _player.GetHealth() <= 0;
             }
 
             // add support for attack distance
@@ -164,7 +191,7 @@ namespace Robots.Classes
 
                 if (robot != null)
                 {
-                    var isDead = robot?.Action(GameHelper.RobotAction.Action.TakeDamage);
+                    var isDead = robot?.Action(GameHelper.ActorAction.Action.TakeDamage);
 
                     if (isDead == true)
                     {
@@ -173,6 +200,8 @@ namespace Robots.Classes
                     break;
                 }
             }
+
+            return _player.GetHealth() <= 0;
         }
 
     }

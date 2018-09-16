@@ -45,10 +45,10 @@
     <Compile Include="Classes\Arena.cs" />
     <Compile Include="Classes\Game.cs" />
     <Compile Include="Classes\GameHelper.cs" />
-    <Compile Include="Classes\Person.cs" />
+    <Compile Include="Classes\Actor.cs" />
     <Compile Include="Interfaces\IArena.cs" />
     <Compile Include="Interfaces\IGame.cs" />
-    <Compile Include="Interfaces\IPerson.cs" />
+    <Compile Include="Interfaces\IActor.cs" />
     <Compile Include="Interfaces\IPlayer.cs" />
     <Compile Include="Interfaces\IRobot.cs" />
     <Compile Include="Classes\Player.cs" />

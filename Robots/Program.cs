@@ -20,7 +20,6 @@ namespace Robots
                 game.RestartGame();
             }
 
-            Console.Read();
             return 0;
 
             /*

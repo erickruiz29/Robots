@@ -34,7 +34,7 @@ namespace Robots.Classes
                     case '.':
                         _arena[robot.GetY()][robot.GetX()] = 'R';
                         break;
-                    case '1':
+                    case 'R':
                         _arena[robot.GetY()][robot.GetX()] = '2';
                         break;
                     case '2':

@@ -2,7 +2,7 @@
 
 namespace Robots.Classes
 {
-    public class Robot : Person, IRobot
+    public class Robot : Actor, IRobot
     {
 
         public Robot()
@@ -15,11 +15,23 @@ namespace Robots.Classes
             return _x == x && _y == y;
         }
 
-        public bool Action(int action)
+        public override bool Action(int action)
         {
             switch (action)
             {
-                case GameHelper.RobotAction.Action.TakeDamage:
+                case GameHelper.ActorAction.Move.Up:
+                    _y = _y - 1;
+                    break;
+                case GameHelper.ActorAction.Move.Down:
+                    _y = _y + 1;
+                    break;
+                case GameHelper.ActorAction.Move.Left:
+                    _x = _x - 1;
+                    break;
+                case GameHelper.ActorAction.Move.Right:
+                    _x = _x + 1;
+                    break;
+                case GameHelper.ActorAction.Action.TakeDamage:
                     _health -= GameHelper.GetPlayersAttack();
                     break;
             }

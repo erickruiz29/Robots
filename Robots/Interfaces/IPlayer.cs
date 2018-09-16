@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace Robots.Interfaces
 {
-    public interface IPlayer : IPerson
+    public interface IPlayer : IActor
     {
-        void Action(int action);
     }
 }

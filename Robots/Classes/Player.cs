@@ -2,7 +2,7 @@
 
 namespace Robots.Classes
 {
-    public class Player : Person, IPlayer
+    public class Player : Actor, IPlayer
     {
 
         public Player()
@@ -10,26 +10,28 @@ namespace Robots.Classes
             _health = 100;
         }
 
-        public void Action(int action)
+        public override bool Action(int action)
         {
             switch (action)
             {
-                case GameHelper.PlayerAction.Move.Up:
+                case GameHelper.ActorAction.Move.Up:
                     _y = _y - 1;
                     break;
-                case GameHelper.PlayerAction.Move.Down:
+                case GameHelper.ActorAction.Move.Down:
                     _y = _y + 1;
                     break;
-                case GameHelper.PlayerAction.Move.Left:
+                case GameHelper.ActorAction.Move.Left:
                     _x = _x - 1;
                     break;
-                case GameHelper.PlayerAction.Move.Right:
+                case GameHelper.ActorAction.Move.Right:
                     _x = _x + 1;
                     break;
-                case GameHelper.PlayerAction.Action.TakeDamage:
+                case GameHelper.ActorAction.Action.TakeDamage:
                     _health -= GameHelper.GetBotsAttack();
                     break;
             }
+
+            return _health <= 0;
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Robots.Interfaces
         string StartGame();
         void ResetGame();
         void RestartGame();
-        void MoveAction(int action);
-        void AttackAction(int action);
+        bool MoveAction(IActor actor, int action);
+        bool AttackAction(int action);
     }
 }

@@ -15,13 +15,13 @@ namespace Robots
         private const string FileName = @"../../arena1.map";
         private const int NumRows = 20;
         private const int NumCols = 20;
-        private const int NumBots = 20;
+        private const int NumBots = 100 ;
         private const int BotsHealth = 5;
         private const int PlayersHealth = 20;
         private const int PlayersAttack = 2;
         private const int BotsAttack = 1;
 
-        public static class PlayerAction
+        public static class ActorAction
         {
             public static class Move
             {
@@ -39,14 +39,6 @@ namespace Robots
                 public const int Right = 7;
             }
 
-            public static class Action
-            {
-                public const int TakeDamage = 8;
-            }
-        }
-
-        public static class RobotAction
-        {
             public static class Action
             {
                 public const int TakeDamage = 8;

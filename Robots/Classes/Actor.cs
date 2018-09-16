@@ -2,13 +2,13 @@
 
 namespace Robots.Classes
 {
-    public class Person : IPerson
+    public class Actor : IActor
     {
         protected int _x;
         protected int _y;
         protected double _health;
 
-        public Person()
+        public Actor()
         {
             _x = -1;
             _y = -1;
@@ -36,6 +36,11 @@ namespace Robots.Classes
         public double GetHealth()
         {
             return _health;
+        }
+
+        public virtual bool Action(int action)
+        {
+            return false;
         }
     }
 }

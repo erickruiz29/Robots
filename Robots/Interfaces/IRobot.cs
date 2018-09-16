@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Robots.Interfaces
 {
-    public interface IRobot : IPerson
+    public interface IRobot : IActor
     {
         bool IsAt(int x, int y);
-        bool Action(int action);
     }
 }
